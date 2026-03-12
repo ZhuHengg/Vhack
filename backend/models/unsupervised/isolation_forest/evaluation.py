@@ -69,6 +69,41 @@ def evaluate_predictions(y_true: np.ndarray, iso_predictions: np.ndarray, df_fil
     plt.close(fig)
     print(f"Saved: {dist_plot_path}")
 
+    # 4. Feature Correlation Heatmap
+    # We use df_filtered but only numeric columns used as features + isFraud
+    feature_cols = [c for c in df_filtered.columns if c not in ("iso_risk_score", "iso_prediction", "risk_tier", "nameOrig", "nameDest", "isFlaggedFraud", "type")] 
+    # Notice we exclude strings if any are left
+    
+    corr_df = df_filtered[feature_cols].copy()
+    # ensuring type is numeric if we want to include it (it was label encoded)
+    if 'type' in df_filtered.columns and pd.api.types.is_numeric_dtype(df_filtered['type']):
+        corr_df['type'] = df_filtered['type']
+        
+    corr = corr_df.corr()
+    
+    fig, ax = plt.subplots(figsize=(14, 12))
+    mask = np.triu(np.ones_like(corr, dtype=bool))
+    cmap = sns.diverging_palette(230, 20, as_cmap=True)
+    sns.heatmap(corr, mask=mask, cmap=cmap, vmax=1.0, vmin=-1.0, center=0,
+                square=True, linewidths=.5, annot=True, fmt=".2f", cbar_kws={"shrink": .5}, ax=ax)
+    
+    ax.set_title("Feature Correlation Heatmap", fontsize=16)
+    plt.tight_layout()
+    corr_plot_path = os.path.join(out_plots, "correlation_heatmap.png")
+    fig.savefig(corr_plot_path, dpi=200)
+    plt.close(fig)
+    print(f"Saved: {corr_plot_path}")
+    ax.axvline(92, color="red",    ls="--", lw=1.2, label="Flag / Block boundary (92)")
+    ax.set_xlabel("Risk Score (0–100)")
+    ax.set_ylabel("Transaction Count")
+    ax.set_title("Risk Score Distribution by Class")
+    ax.legend()
+    plt.tight_layout()
+    dist_plot_path = os.path.join(out_plots, "risk_score_distribution.png")
+    fig.savefig(dist_plot_path, dpi=150)
+    plt.close(fig)
+    print(f"Saved: {dist_plot_path}")
+
     # 4. Top 10 most anomalous transactions
     top10 = df_filtered.nlargest(10, "iso_risk_score")
     print("\nTop 10 Most Anomalous Transactions:")
@@ -77,5 +112,11 @@ def evaluate_predictions(y_true: np.ndarray, iso_predictions: np.ndarray, df_fil
     top10_path = os.path.join(out_results, "top10_anomalies.csv")
     top10.to_csv(top10_path, index=False)
     print(f"Saved: {top10_path}")
+
+    # 5. Save all predicted fraud transactions
+    predicted_frauds = df_filtered[df_filtered["iso_prediction"] == 1]
+    predicted_frauds_path = os.path.join(out_results, "predicted_frauds.csv")
+    predicted_frauds.to_csv(predicted_frauds_path, index=False)
+    print(f"Saved: {predicted_frauds_path} (Total Predicted Frauds: {len(predicted_frauds)})")
 
     return top10

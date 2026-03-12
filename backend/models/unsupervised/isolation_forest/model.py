@@ -6,10 +6,14 @@ import joblib
 import os
 
 class IsolationForestModel:
-    def __init__(self, contamination: float, n_estimators: int = 100, random_state: int = 42):
+    def __init__(self, contamination: float, n_estimators: int = 200,
+                 max_samples: int = 512, max_features: float = 0.8,
+                 random_state: int = 42):
         self.model = IsolationForest(
             contamination=contamination,
             n_estimators=n_estimators,
+            max_samples=max_samples,
+            max_features=max_features,
             random_state=random_state,
             n_jobs=-1,
         )

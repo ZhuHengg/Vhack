@@ -40,7 +40,16 @@ def main():
     X_scaled, df_filtered, y_true, fraud_rate = preprocess_features(df)
 
     # STEP 4: MODEL INIT & TRAINING
-    iso_model = IsolationForestModel(contamination=fraud_rate, n_estimators=100)
+    # Aggressive 5x multiplier on contamination (capped at 10%)
+    # Raw fraud_rate (~0.3%) is too conservative for Isolation Forest
+    contamination = min(fraud_rate * 5, 0.1)
+    print(f"Adjusted contamination: {contamination:.4f} (raw fraud rate {fraud_rate:.4f} × 5)\n")
+    iso_model = IsolationForestModel(
+        contamination=contamination,
+        n_estimators=200,
+        max_samples=512,
+        max_features=0.8,
+    )
     
     # Fit and get predictions / risk scores
     iso_preds, iso_risk_score = iso_model.fit_predict(X_scaled)
