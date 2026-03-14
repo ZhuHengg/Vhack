@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-base: #06090e;
+    --bg-50: #0a0e17;
+    --bg-100: #111827;
+    --bg-200: #1e293b;
+    --bg-300: #334155;
+    --border: #1e293b;
+    --border-md: #334155;
+
+    --cyan-900: #164e63;
+    --cyan-700: #0e7490;
+    --cyan-500: #06b6d4;
+    --cyan-400: #22d3ee;
+    --cyan-100: #cffafe;
+    --cyan-50: #ecfeff;
+
+    --teal-700: #0f766e;
+    --teal-500: #14b8a6;
+    --teal-400: #2dd4bf;
+    --teal-200: #99f6e4;
+    --teal-50: #f0fdfa;
+
+    --approve: #10b981;
+    --flag: #f59e0b;
+    --block: #ef4444;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-white: #ffffff;
+  }
+
+  body {
+    @apply bg-bg-base text-text-primary font-mono antialiased;
+    background-color: var(--bg-base);
+  }
+
+  html, body, #root {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .section-label {
+    @apply uppercase tracking-widest text-[10px] text-text-muted font-bold;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #22d3ee, #2dd4bf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Live Simulator animations */
+@keyframes popOut {
+  0% {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-pop-out {
+  animation: popOut 0.5s ease-out forwards;
+}
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-300); 
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted); 
+}
+
+/* Slider Track CSS overrides */
+input[type=range] {
+  -webkit-appearance: none;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  cursor: pointer;
+  margin-top: -5px;
+  box-shadow: 0 0 0 2px var(--cyan-500), 0 0 10px rgba(6,182,212,0.5);
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: var(--bg-300);
+  border-radius: 4px;
+}
