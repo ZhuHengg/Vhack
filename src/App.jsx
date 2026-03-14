@@ -1,0 +1,34 @@
+import React, { useState } from 'react'
+import Header from './components/layout/Header'
+import Sidebar from './components/layout/Sidebar'
+import Dashboard from './pages/Dashboard'
+import Search from './pages/Search'
+import RiskRadar from './pages/RiskRadar'
+import LiveSimulator from './pages/LiveSimulator'
+import FraudAnalysis from './pages/FraudAnalysis'
+import FraudSimulator from './pages/FraudSimulator'
+import { useTransactionEngine } from './hooks/useTransactionEngine'
+
+function App() {
+  const [activeTab, setActiveTab] = useState('dashboard')
+  const engine = useTransactionEngine()
+
+  return (
+    <div className="flex h-screen bg-bg-base overflow-hidden">
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="flex-1 flex flex-col h-full bg-grid-pattern bg-grid">
+        <Header engine={engine} activeTab={activeTab} />
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-6 relative">
+          {activeTab === 'dashboard' && <Dashboard engine={engine} />}
+          {activeTab === 'search' && <Search engine={engine} />}
+          {activeTab === 'radar' && <RiskRadar engine={engine} />}
+          {activeTab === 'live' && <LiveSimulator engine={engine} />}
+          {activeTab === 'analysis' && <FraudAnalysis engine={engine} />}
+          {activeTab === 'simulator' && <FraudSimulator engine={engine} />}
+        </main>
+      </div>
+    </div>
+  )
+}
+
+export default App
